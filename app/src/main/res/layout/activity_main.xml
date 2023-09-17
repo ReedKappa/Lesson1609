@@ -126,10 +126,10 @@
         android:layout_marginBottom="50px">
 
         <Button
-            android:id="@+id/equal"
+            android:id="@+id/delete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="="
+            android:text="--"
             android:layout_marginRight="50px"/>
 
         <Button
@@ -140,10 +140,10 @@
             android:layout_marginRight="50px"/>
 
         <Button
-            android:id="@+id/delete"
+            android:id="@+id/equal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="--"
+            android:text="="
             android:layout_marginRight="50px"/>
 
         <Button

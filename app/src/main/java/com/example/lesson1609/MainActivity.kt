@@ -10,10 +10,10 @@ import android.widget.TextView
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
-    lateinit var view: TextView
-    var firstNumber = 0
-    var symbol = ""
-    val operationsMap = mapOf<Operations, String>(
+    private lateinit var view: TextView
+    private var firstNumber = 0
+    private var symbol = ""
+    private val operationsMap = mapOf<Operations, String>(
         Operations.Plus to "+",
         Operations.Minus to "-",
         Operations.Multiply to "*",
@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         Operations.Clear to "Clear"
     )
 
-    val numberMap = mapOf<Numbers, String>(
+    private val numberMap = mapOf<Numbers, String>(
         Numbers.Zero to "0",
         Numbers.One to "1",
         Numbers.Two to "2",
@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         val seven = findViewById<Button>(R.id.seven)
         val eight = findViewById<Button>(R.id.eight)
         val nine = findViewById<Button>(R.id.nine)
+        val zero = findViewById<Button>(R.id.zero)
         val plus = findViewById<Button>(R.id.plus)
         val minus = findViewById<Button>(R.id.minus)
         val multiply = findViewById<Button>(R.id.multiply)
@@ -66,6 +67,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         seven.setOnClickListener(this)
         eight.setOnClickListener(this)
         nine.setOnClickListener(this)
+        zero.setOnClickListener(this)
         plus.setOnClickListener(this)
         minus.setOnClickListener(this)
         multiply.setOnClickListener(this)
@@ -87,6 +89,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             R.id.seven -> Calculations(number = Numbers.Seven)
             R.id.eight -> Calculations(number = Numbers.Eight)
             R.id.nine -> Calculations(number = Numbers.Nine)
+            R.id.zero -> Calculations(number = Numbers.Zero)
+
             R.id.plus -> Calculations(operation = Operations.Plus)
             R.id.minus -> Calculations(operation = Operations.Minus)
             R.id.multiply -> Calculations(operation = Operations.Multiply)
@@ -98,6 +102,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     fun Calculations(number: Numbers? = null, operation: Operations? = null) {
+        if (((view.text.toString() == "" && operation != Operations.Minus)
+                    || view.text.toString() == "Введите числа"
+                    || view.text.toString() == "ОШИБКА!") && operation != null) {
+            if (operation == Operations.Minus){
+                view.text = operationsMap[Operations.Minus]
+                return
+            }
+            return
+        }
         if (number != null) {
             if (view.text.contains("Введите числа")) {
                 view.text = ""
@@ -127,6 +140,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun getAnswer(number: String, operation: Operations) {
+        if (divideByZero(number.toInt(), operation)) {
+            view.text = "ОШИБКА!"
+            return
+        }
         when (operation) {
             Operations.Plus -> view.text = (firstNumber + number.toInt()).toString()
             Operations.Minus -> view.text = (firstNumber - number.toInt()).toString()
@@ -140,12 +157,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     }
 
-    fun changeNumber(number: String, operation: Operations) {
+    private fun changeNumber(number: String, operation: Operations) {
         firstNumber = number.toInt()
         view.text = operationsMap[operation]
     }
 
-    fun deleteNumber() {
+    private fun deleteNumber() {
+        if (view.text.toString() == "Введите числа") {
+            return
+        }
         if (view.text.isEmpty()) {
             firstNumber = 0
             return
@@ -153,8 +173,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         view.text = view.text.dropLast(1)
     }
 
-    fun findMap(hashMap: Map<Operations, String>, operationSymbol: String) : Operations {
+    private fun findMap(hashMap: Map<Operations, String>, operationSymbol: String) : Operations {
         return hashMap.filter { operationSymbol == it.value }.keys.first()
+    }
+
+    private fun divideByZero(number: Int, operation: Operations): Boolean {
+        return (number == 0 && operation == Operations.Divide)
     }
 }
 
